@@ -285,6 +285,18 @@ str_writer_new(int argc, VALUE *argv, VALUE self) {
     return Data_Wrap_Struct(oj_string_writer_class, 0, str_writer_free, sw);
 }
 
+/* Document-method: as_json
+ * call-seq: as_json()
+ *
+ * Returns itself.
+ *
+ * *return* [_self_]
+ */
+static VALUE
+str_writer_as_json(int argc, VALUE *argv, VALUE self) {
+    return self;
+}
+
 /* Document-method: push_key
  * call-seq: push_key(key)
  *
@@ -500,6 +512,7 @@ void
 oj_string_writer_init() {
     oj_string_writer_class = rb_define_class_under(Oj, "StringWriter", rb_cObject);
     rb_define_module_function(oj_string_writer_class, "new", str_writer_new, -1);
+    rb_define_method(oj_string_writer_class, "as_json", str_writer_as_json, -1);
     rb_define_method(oj_string_writer_class, "push_key", str_writer_push_key, 1);
     rb_define_method(oj_string_writer_class, "push_object", str_writer_push_object, -1);
     rb_define_method(oj_string_writer_class, "push_array", str_writer_push_array, -1);
