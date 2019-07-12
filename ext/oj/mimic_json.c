@@ -684,6 +684,7 @@ static struct _options	mimic_object_to_json_options = {
     No,		// allow_invalid
     No,		// create_ok
     No,		// allow_nan
+    No,		// oj_string_writer_to_s
     No,		// trace
     0,		// integer_range_min
     0,		// integer_range_max

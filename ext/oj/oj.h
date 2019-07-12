@@ -146,6 +146,7 @@ typedef struct _options {
     char		allow_invalid;	// YesNo - allow invalid unicode
     char		create_ok;	// YesNo allow create_id
     char		allow_nan;	// YEsyNo for parsing only
+    char		oj_string_writer_to_s;	// YesNo
     char		trace;		// YesNo
     int64_t		integer_range_min; // dump numbers outside range as string
     int64_t		integer_range_max;

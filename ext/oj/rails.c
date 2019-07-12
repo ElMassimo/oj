@@ -222,6 +222,17 @@ dump_bigdecimal(VALUE obj, int depth, Out out, bool as_ok) {
 }
 
 static void
+dump_stringwriter(VALUE obj, int depth, Out out, bool as_ok) {
+    volatile VALUE	rstr = rb_funcall(obj, oj_to_s_id, 0);
+    const char		*str = rb_string_value_ptr((VALUE*)&rstr);
+    if (Yes == out->opts->oj_string_writer_to_s) {
+	oj_dump_raw(str, (int)RSTRING_LEN(rstr), out);
+    } else {
+	oj_dump_cstr(str, (int)RSTRING_LEN(rstr), 0, 0, out);
+    }
+}
+
+static void
 dump_sec_nano(VALUE obj, int64_t sec, long nsec, Out out) {
     char		buf[64];
     struct _timeInfo	ti;
@@ -554,6 +565,7 @@ static struct _namedFunc	dump_map[] = {
     { "ActionController::Parameters", dump_actioncontroller_parameters },
     { "ActiveRecord::Result", dump_activerecord_result },
     { "ActiveSupport::TimeWithZone", dump_timewithzone },
+    { "Oj::StringWriter", dump_stringwriter },
     { "BigDecimal", dump_bigdecimal },
     { "Range", dump_to_s },
     { "Regexp", dump_regexp },

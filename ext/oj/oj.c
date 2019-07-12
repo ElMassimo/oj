@@ -94,6 +94,7 @@ VALUE	oj_hash_class_sym;
 VALUE	oj_indent_sym;
 VALUE	oj_object_class_sym;
 VALUE	oj_quirks_mode_sym;
+VALUE   oj_string_writer_to_s_sym;
 VALUE	oj_trace_sym;
 
 static VALUE	allow_blank_sym;
@@ -175,6 +176,7 @@ struct _options	oj_default_options = {
     No,		// allow_invalid
     No,		// create_ok
     Yes,	// allow_nan
+    NotSet,	// oj_string_writer_to_s
     No,		// trace
     0,		// integer_range_min
     0,		// integer_range_max
@@ -246,6 +248,7 @@ struct _options	oj_default_options = {
  * - *:omit_nil* [_true_|_false_] if true Hash and Object attributes with nil values are omitted
  * - *:ignore* [_nil_|Array] either nil or an Array of classes to ignore when dumping
  * - *:integer_range* [_Range_] Dump integers outside range as strings. 
+ * - *:oj_string_writer_to_s* [_Boolean_|_nil_] dump Oj::StringWriter as a raw JSON String
  * - *:trace* [_true,_|_false_] Trace all load and dump calls, default is false (trace is off)
  *
  * Return [_Hash_] all current option settings.
@@ -275,6 +278,7 @@ get_def_opts(VALUE self) {
     rb_hash_aset(opts, oj_quirks_mode_sym, (Yes == oj_default_options.quirks_mode) ? Qtrue : ((No == oj_default_options.quirks_mode) ? Qfalse : Qnil));
     rb_hash_aset(opts, allow_invalid_unicode_sym, (Yes == oj_default_options.allow_invalid) ? Qtrue : ((No == oj_default_options.allow_invalid) ? Qfalse : Qnil));
     rb_hash_aset(opts, oj_allow_nan_sym, (Yes == oj_default_options.allow_nan) ? Qtrue : ((No == oj_default_options.allow_nan) ? Qfalse : Qnil));
+    rb_hash_aset(opts, oj_string_writer_to_s_sym, (Yes == oj_default_options.oj_string_writer_to_s) ? Qtrue : ((No == oj_default_options.oj_string_writer_to_s) ? Qfalse : Qnil));
     rb_hash_aset(opts, oj_trace_sym, (Yes == oj_default_options.trace) ? Qtrue : ((No == oj_default_options.trace) ? Qfalse : Qnil));
     rb_hash_aset(opts, float_prec_sym, INT2FIX(oj_default_options.float_prec));
     switch (oj_default_options.mode) {
@@ -389,6 +393,7 @@ get_def_opts(VALUE self) {
  *   - *:omit_nil* [_true_|_false_] if true Hash and Object attributes with nil values are omitted.
  *   - *:ignore* [_nil_|Array] either nil or an Array of classes to ignore when dumping
  *   - *:integer_range* [_Range_] Dump integers outside range as strings. 
+ *   - *:oj_string_writer_to_s* [_Boolean_|_nil_] dump Oj:StringWriter as a raw JSON string.
  *   - *:trace* [_Boolean_] turn trace on or off.
  */
 static VALUE
@@ -417,6 +422,7 @@ oj_parse_options(VALUE ropts, Options copts) {
 	{ oj_quirks_mode_sym, &copts->quirks_mode },
 	{ allow_invalid_unicode_sym, &copts->allow_invalid },
 	{ oj_allow_nan_sym, &copts->allow_nan },
+    { oj_string_writer_to_s_sym, &copts->oj_string_writer_to_s },
 	{ oj_trace_sym, &copts->trace },
 	{ oj_create_additions_sym, &copts->create_ok },
 	{ Qnil, 0 }
@@ -1653,6 +1659,7 @@ Init_oj() {
     oj_quirks_mode_sym = ID2SYM(rb_intern("quirks_mode"));	rb_gc_register_address(&oj_quirks_mode_sym);
     oj_space_before_sym = ID2SYM(rb_intern("space_before"));	rb_gc_register_address(&oj_space_before_sym);
     oj_space_sym = ID2SYM(rb_intern("space"));			rb_gc_register_address(&oj_space_sym);
+    oj_string_writer_to_s_sym = ID2SYM(rb_intern("oj_string_writer_to_s"));rb_gc_register_address(&oj_string_writer_to_s_sym);
     oj_trace_sym = ID2SYM(rb_intern("trace"));			rb_gc_register_address(&oj_trace_sym);
     omit_nil_sym = ID2SYM(rb_intern("omit_nil"));		rb_gc_register_address(&omit_nil_sym);
     rails_sym = ID2SYM(rb_intern("rails"));			rb_gc_register_address(&rails_sym);
